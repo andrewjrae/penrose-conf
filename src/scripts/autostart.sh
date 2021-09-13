@@ -21,9 +21,9 @@ autorandr --change
 run polybar mainbar-xmonad &
 run nm-applet &
 run pamac-tray &
-run xfce4-power-manager &
-run volumeicon &
-numlockx on &
+# run xfce4-power-manager &
+# run volumeicon &
+# numlockx on &
 blueberry-tray &
 picom --config $HOME/.xmonad/scripts/picom.conf &
 /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &

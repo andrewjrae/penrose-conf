@@ -26,7 +26,7 @@ const TERMINAL: &str = "alacritty";
 const LAUNCHER: &str = "rofi -show run";
 const BROWSER: &str = "google-chrome-stable";
 const EDITOR: &str = "emacsclient -c -a emacs";
-const START_SCRIPT: &str = "./scripts/autostart.sh";
+const START_SCRIPT: &str = "/home/ajrae/penrose_config/src/scripts/autostart.sh";
 
 // Start hook to run all the important stuff like picom etc
 struct StartHook {}
@@ -54,6 +54,7 @@ fn main() -> penrose::Result<()> {
         "dmenu",
         "Arandr",
         "Fsearch",
+        "Arcolinux Logout",
         "floating"];
 
     let config = Config::default()
@@ -67,7 +68,6 @@ fn main() -> penrose::Result<()> {
         .build()
         .unwrap();
 
-    // let config = Config::default();
     let key_bindings = gen_keybindings! {
         // Program launchers
         "M-r" => run_external!(LAUNCHER);
@@ -81,6 +81,11 @@ fn main() -> penrose::Result<()> {
         "M-o" => run_external!("fsearch");
         "M-p" => run_external!("rofi-pass");
         "M-u" => run_external!("arcolinux-logout");
+
+        "M-C-w" => run_external!("networkmanager_dmenu");
+
+        // XF86 codes
+        // "XF86_BrightnessUp" => run_external!("xbacklight -inc 5");
 
         // Exit Penrose (important to remember this one!)
         "M-A-C-Escape" => run_internal!(exit);
