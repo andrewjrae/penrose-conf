@@ -1,49 +1,35 @@
 #[macro_use]
 extern crate penrose;
 
+// #[macro_use]
+extern crate penrose_ajrae;
+
 use penrose::{
     core::{
         // bindings::KeyEventHandler,
-        hooks::Hook,
+        // client::Client,
+        // hooks::Hook,
         config::Config,
-        helpers::{
-            index_selectors,
-            spawn,
-        },
-        xconnection::XConn,
+        helpers:: index_selectors,
+        // xconnection::{XConn, Xid},
         // manager::WindowManager,
     },
     logging_error_handler,
     xcb::new_xcb_backed_window_manager,
-    Backward, Forward, Less, More, Selector, WindowManager,
+    Backward, Forward, Less, More, Selector, Result
+};
+
+use penrose_ajrae::{
+    hooks::{StartupScript, CenterFloat},
+    TERMINAL, LAUNCHER, BROWSER, EDITOR, START_SCRIPT
 };
 
 use simplelog::{LevelFilter, SimpleLogger};
 
-
-// Replace these with your preferred terminal and program launcher
-const TERMINAL: &str = "alacritty";
-const LAUNCHER: &str = "rofi -show run";
-const BROWSER: &str = "google-chrome-stable";
-const EDITOR: &str = "emacsclient -c -a emacs";
-const START_SCRIPT: &str = "/home/ajrae/penrose_config/src/scripts/autostart.sh";
+use std::collections::HashMap;
 
 // Start hook to run all the important stuff like picom etc
-struct StartHook {}
-
-impl StartHook {
-    pub fn new() -> Box<Self> {
-        Box::new(Self{})
-    }
-}
-
-impl<X: XConn> Hook<X> for StartHook {
-    fn startup(&mut self, _wm: &mut WindowManager<X>) -> penrose::Result<()> {
-        spawn(START_SCRIPT)
-    }
-}
-
-fn main() -> penrose::Result<()> {
+fn main() -> Result<()> {
     // Initialise the logger (use LevelFilter::Debug to enable debug logging)
     if let Err(e) = SimpleLogger::init(LevelFilter::Info, simplelog::Config::default()) {
         panic!("unable to set log level: {}", e);
@@ -54,8 +40,11 @@ fn main() -> penrose::Result<()> {
         "dmenu",
         "Arandr",
         "Fsearch",
-        "Arcolinux Logout",
-        "floating"];
+        "arcologout.py",
+        "pinentry-gtk-2",
+        "polybar",
+        "floating",
+        ];
 
     let config = Config::default()
         .builder()
@@ -63,8 +52,8 @@ fn main() -> penrose::Result<()> {
         .floating_classes(floating_classes)
         // .layouts(my_layouts())
         .border_px(3)
-        .focused_border(0xc678dd)
         .bar_height(30)
+        .focused_border("#c678dd")?
         .build()
         .unwrap();
 
@@ -84,8 +73,16 @@ fn main() -> penrose::Result<()> {
 
         "M-C-w" => run_external!("networkmanager_dmenu");
 
-        // XF86 codes
-        // "XF86_BrightnessUp" => run_external!("xbacklight -inc 5");
+        // Media keys
+        "XF86AudioMute" => run_external!("amixer -q set Master toggle");
+        "XF86AudioLowerVolume" => run_external!("amixer -q set Master 5%-");
+        "XF86AudioRaiseVolume" => run_external!("amixer -q set Master 5%+");
+        "XF86MonBrightnessUp" => run_external!("xbacklight -inc 5");
+        "XF86MonBrightnessDown" => run_external!("xbacklight -dec 5");
+        "XF86AudioPlay" => run_external!("playerctl play-pause");
+        "XF86AudioNext" => run_external!("playerctl next");
+        "XF86AudioPrev" => run_external!("playerctl previous");
+        "XF86AudioStop" => run_external!("playerctl stop");
 
         // Exit Penrose (important to remember this one!)
         "M-A-C-Escape" => run_internal!(exit);
@@ -99,7 +96,7 @@ fn main() -> penrose::Result<()> {
         "M-S-n" => run_internal!(drag_client, Forward);
         "M-S-k" => run_internal!(drag_client, Backward);
         "M-S-a" => run_internal!(drag_client, Backward);
-        "M-S-f" => run_internal!(toggle_client_fullscreen, &Selector::Focused);
+        "M-C-f" => run_internal!(toggle_client_fullscreen, &Selector::Focused);
         "M-x" => run_internal!(kill_client);
 
         // workspace management
@@ -113,13 +110,20 @@ fn main() -> penrose::Result<()> {
         "M-Right" => run_internal!(update_main_ratio, More);
         "M-Left" => run_internal!(update_main_ratio, Less);
 
-        refmap [ config.ws_range() ] in {
-            "M-{}" => focus_workspace [ index_selectors(config.workspaces().len()) ];
-            "M-S-{}" => client_to_workspace [ index_selectors(config.workspaces().len()) ];
-            "M-C-{}" => client_to_workspace [ index_selectors(config.workspaces().len()) ];
+        map: { "1", "2", "3", "4", "5", "6", "7", "8", "9" } to index_selectors(9) => {
+            "M-{}" => focus_workspace (REF);
+            "M-S-{}" => client_to_workspace (REF);
+            "M-C-{}" => client_to_workspace (REF);
         };
     };
 
-    let mut wm = new_xcb_backed_window_manager(config, vec![StartHook::new()], logging_error_handler())?;
-    wm.grab_keys_and_run(key_bindings, map!{})
+    let mut wm = new_xcb_backed_window_manager(
+        config,
+        vec![StartupScript::new(START_SCRIPT), CenterFloat::new("floating", 0.9)],
+        logging_error_handler())?;
+
+    wm.init()?;
+    wm.grab_keys_and_run(key_bindings, HashMap::new())?;
+
+    Ok(())
 }

@@ -1,11 +1,16 @@
 [package]
-name = "penrose_config"
+name = "penrose-ajrae"
 version = "0.1.0"
 authors = ["Andrew Rae <ajrae.nv@gmail.com>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[[bin]]
+doc = false
+name = "penrose"
+path = "src/main.rs"
 
 [dependencies]
-penrose = "0.2"
+# penrose = { path = "../penrose" }
+penrose = { git = "https://github.com/sminez/penrose.git", rev = "d7f8468e7ca13e96af163973a1d1bdc3328f0d7a" }
+# penrose = "0.2"
 simplelog = "0.8"
