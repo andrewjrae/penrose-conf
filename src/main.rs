@@ -1,18 +1,15 @@
 #[macro_use]
 extern crate penrose;
 
-// #[macro_use]
+#[macro_use]
 extern crate penrose_ajrae;
 
 use penrose::{
+    contrib::hooks::ManageExistingClients,
     core::{
-        // bindings::KeyEventHandler,
-        // client::Client,
-        // hooks::Hook,
         config::Config,
-        helpers:: index_selectors,
-        // xconnection::{XConn, Xid},
-        // manager::WindowManager,
+        helpers::index_selectors,
+        layout::{side_stack, monocle},
     },
     logging_error_handler,
     xcb::new_xcb_backed_window_manager,
@@ -21,7 +18,7 @@ use penrose::{
 
 use penrose_ajrae::{
     hooks::{StartupScript, CenterFloat},
-    TERMINAL, LAUNCHER, BROWSER, EDITOR, START_SCRIPT
+    TERMINAL, LAUNCHER, BROWSER, EDITOR, START_SCRIPT, FOLLOW_FOCUS_CONF
 };
 
 use simplelog::{LevelFilter, SimpleLogger};
@@ -42,15 +39,20 @@ fn main() -> Result<()> {
         "Fsearch",
         "arcologout.py",
         "pinentry-gtk-2",
-        "polybar",
+        // "polybar",
         "floating",
         ];
+
+    let layouts = vec![
+        layout!("side", side_stack),
+        layout!("mono", FOLLOW_FOCUS_CONF, monocle),
+    ];
 
     let config = Config::default()
         .builder()
         .workspaces(vec!["1", "2", "3", "4", "5", "6", "7", "8", "9"])
         .floating_classes(floating_classes)
-        // .layouts(my_layouts())
+        .layouts(layouts)
         .border_px(3)
         .bar_height(30)
         .focused_border("#c678dd")?
@@ -58,18 +60,22 @@ fn main() -> Result<()> {
         .unwrap();
 
     let key_bindings = gen_keybindings! {
-        // Program launchers
+        // Main programs
         "M-r" => run_external!(LAUNCHER);
         "M-t" => run_external!(TERMINAL);
         "M-b" => run_external!(BROWSER);
         "M-e" => run_external!(EDITOR);
-        // TODO: make a new macro for running terminal cmds
-        // "M-h" => run_external!(concat!(TERMINAL, " -e htop"));
+
+        // Rofi and other utils
         "M-s" => run_external!("rofi -show ssh");
         "M-w" => run_external!("rofi -show window");
         "M-o" => run_external!("fsearch");
         "M-p" => run_external!("rofi-pass");
         "M-u" => run_external!("arcolinux-logout");
+
+        // Terminal utils
+        "M-h" => run_in_terminal!("htop");
+        "M-q" => run_in_terminal!("qalc");
 
         "M-C-w" => run_external!("networkmanager_dmenu");
 
@@ -83,6 +89,11 @@ fn main() -> Result<()> {
         "XF86AudioNext" => run_external!("playerctl next");
         "XF86AudioPrev" => run_external!("playerctl previous");
         "XF86AudioStop" => run_external!("playerctl stop");
+
+        // Screenshots
+        "Print" => run_external!("flameshot gui");
+        "C-Print" => run_external!("escrotum -C -s" );
+        "C-S-Print" => run_external!("escrotum -C -s" );
 
         // Exit Penrose (important to remember this one!)
         "M-A-C-Escape" => run_internal!(exit);
@@ -104,6 +115,7 @@ fn main() -> Result<()> {
 
         // Layout management
         "M-space" => run_internal!(cycle_layout, Forward);
+        "M-f" => run_internal!(cycle_layout, Forward);
         "M-S-space" => run_internal!(cycle_layout, Backward);
         "M-Up" => run_internal!(update_max_main, More);
         "M-Down" => run_internal!(update_max_main, Less);
@@ -119,7 +131,10 @@ fn main() -> Result<()> {
 
     let mut wm = new_xcb_backed_window_manager(
         config,
-        vec![StartupScript::new(START_SCRIPT), CenterFloat::new("floating", 0.9)],
+        vec![StartupScript::new(START_SCRIPT),
+             ManageExistingClients::new(),
+             CenterFloat::new("floating", 0.9),
+        ],
         logging_error_handler())?;
 
     wm.init()?;

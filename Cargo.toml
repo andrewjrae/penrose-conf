@@ -10,7 +10,7 @@ name = "penrose"
 path = "src/main.rs"
 
 [dependencies]
-# penrose = { path = "../penrose" }
-penrose = { git = "https://github.com/sminez/penrose.git", rev = "d7f8468e7ca13e96af163973a1d1bdc3328f0d7a" }
+# penrose = { git = "https://github.com/sminez/penrose.git", rev = "d7f8468e7ca13e96af163973a1d1bdc3328f0d7a" }
+penrose = { git = "https://github.com/sminez/penrose.git", rev = "023dc55b61282d8f92e31d97317ba8d562833d5a" }
 # penrose = "0.2"
 simplelog = "0.8"
