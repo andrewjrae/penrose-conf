@@ -17,7 +17,7 @@ use penrose::{
 };
 
 use penrose_ajrae::{
-    hooks::{StartupScript, CenterFloat},
+    hooks::{StartupScript, CenterFloats},
     TERMINAL, LAUNCHER, BROWSER, EDITOR, START_SCRIPT, FOLLOW_FOCUS_CONF
 };
 
@@ -33,14 +33,9 @@ fn main() -> Result<()> {
     };
 
     let floating_classes = vec![
-        "rofi",
-        "dmenu",
-        "Arandr",
-        "Fsearch",
+        // "rofi",
+        "fsearch",
         "arcologout.py",
-        "pinentry-gtk-2",
-        // "polybar",
-        "floating",
         ];
 
     let layouts = vec![
@@ -129,11 +124,20 @@ fn main() -> Result<()> {
         };
     };
 
+    let float_scales: HashMap<String, f64> =
+        [("fsearch".to_string(), 0.4),
+         ("arcologout.py".to_string(), 0.7)]
+        .iter().cloned().collect();
+
+    let center_ignores: Vec<String> = vec!["polybar".to_string(),
+                                           "tray".to_string(),
+                                           "pamac-tray".to_string()];
+
     let mut wm = new_xcb_backed_window_manager(
         config,
         vec![StartupScript::new(START_SCRIPT),
              ManageExistingClients::new(),
-             CenterFloat::new("floating", 0.9),
+             CenterFloats::new(0.45, float_scales, center_ignores)
         ],
         logging_error_handler())?;
 

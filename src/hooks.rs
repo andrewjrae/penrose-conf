@@ -1,5 +1,3 @@
-// crate penrose_ajrae;
-
 use penrose::{
     core::{
         client::Client,
@@ -9,9 +7,12 @@ use penrose::{
     WindowManager, Result
 };
 
+use std::collections::HashMap;
+
 pub struct StartupScript {
     path: String,
 }
+
 impl StartupScript {
     pub fn new(s: impl Into<String>) -> Box<Self> {
         Box::new( Self { path: s.into() } )
@@ -24,33 +25,40 @@ impl<X: XConn> Hook<X> for StartupScript {
     }
 }
 
-pub struct CenterFloat {
-    class_name: String,
-    scale: f64,
+pub struct CenterFloats {
+    default_scale: f64,
+    overrides: HashMap<String, f64>,
+    ignores: Vec<String>,
 }
 
-impl CenterFloat {
-    pub fn new(class_name: impl Into<String>, scale: f64) -> Box<Self> {
+impl CenterFloats {
+    pub fn new(default_scale: f64,
+               overrides: HashMap<String, f64>,
+               ignores: Vec<String>) -> Box<Self> {
         Box::new(Self {
-            class_name: class_name.into(),
-            scale,
+            default_scale,
+            overrides,
+            ignores
         })
     }
 
-    fn centered_above<X: XConn>(&self, id: Xid, wm: &mut WindowManager<X>) -> Result<()> {
+    fn centered_above<X: XConn>(&self, id: Xid, wm: &mut WindowManager<X>, scale: f64) -> Result<()> {
         if let Some(region) = wm.screen_size(wm.active_screen_index()) {
-            let r = region.scale_w(self.scale).scale_h(self.scale);
+            let r = region.scale_w(scale).scale_h(scale);
             wm.position_client(id, r.centered_in(&region)?, true)?;
         }
-        wm.show_client(id)
+        wm.show_client(id)?;
+        Ok(())
     }
 }
 
-impl<X: XConn> Hook<X> for CenterFloat {
+impl<X: XConn> Hook<X> for CenterFloats {
     fn new_client(&mut self, wm: &mut WindowManager<X>, c: &mut Client) -> Result<()> {
-        if c.wm_class() == self.class_name {
-            c.set_floating(true);
-            self.centered_above(c.id(), wm)?;
+        if let Some(scale) = self.overrides.get(c.wm_class()) {
+            self.centered_above(c.id(), wm, *scale)?;
+        }
+        else if !self.ignores.contains(&c.wm_class().to_string()) {
+            self.centered_above(c.id(), wm, self.default_scale)?;
         }
 
         Ok(())
