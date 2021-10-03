@@ -339,7 +339,6 @@ dependencies = [
 [[package]]
 name = "penrose"
 version = "0.2.0"
-source = "git+https://github.com/sminez/penrose.git?rev=023dc55b61282d8f92e31d97317ba8d562833d5a#023dc55b61282d8f92e31d97317ba8d562833d5a"
 dependencies = [
  "bitflags",
  "cairo-rs",
@@ -366,7 +365,6 @@ dependencies = [
 [[package]]
 name = "penrose_keysyms"
 version = "0.1.0"
-source = "git+https://github.com/sminez/penrose.git?rev=023dc55b61282d8f92e31d97317ba8d562833d5a#023dc55b61282d8f92e31d97317ba8d562833d5a"
 dependencies = [
  "strum 0.19.5",
  "strum_macros 0.19.4",
@@ -375,7 +373,6 @@ dependencies = [
 [[package]]
 name = "penrose_proc"
 version = "0.1.2"
-source = "git+https://github.com/sminez/penrose.git?rev=023dc55b61282d8f92e31d97317ba8d562833d5a#023dc55b61282d8f92e31d97317ba8d562833d5a"
 dependencies = [
  "penrose_keysyms",
  "proc-macro2",
