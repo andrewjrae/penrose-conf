@@ -18,7 +18,7 @@ xsetroot -cursor_name left_ptr &
 autorandr --change
 
 # starting utility applications at login time
-/home/ajrae/.config/polybar/launch.sh
+/etc/local/scripts/polybar_launch.sh
 # run polybar mainbar-xmonad &
 # run nm-applet &
 # run pamac-tray &
@@ -26,6 +26,7 @@ autorandr --change
 # run volumeicon &
 # numlockx on &
 # blueberry-tray &
+run unclutter &
 picom --config $HOME/.xmonad/scripts/picom.conf &
 /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
 /usr/lib/xfce4/notifyd/xfce4-notifyd &

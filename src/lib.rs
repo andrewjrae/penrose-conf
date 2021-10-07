@@ -48,4 +48,4 @@ pub const LAUNCHER: &str = "rofi -show run";
 // pub const BROWSER: &str = "google-chrome-stable";
 pub const BROWSER: &str = "brave";
 pub const EDITOR: &str = "emacsclient -c -a emacs";
-pub const START_SCRIPT: &str = "/home/ajrae/penrose-conf/src/scripts/autostart.sh";
+pub const START_SCRIPT: &str = "/etc/local/scripts/autostart.sh";

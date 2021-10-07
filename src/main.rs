@@ -92,6 +92,7 @@ fn main() -> Result<()> {
 
         // Exit Penrose (important to remember this one!)
         "M-A-C-Escape" => run_internal!(exit);
+        "M-A-C-r" => run_external!(START_SCRIPT);
 
         // client management
         "M-j" => run_internal!(cycle_client, Forward);
@@ -107,11 +108,12 @@ fn main() -> Result<()> {
 
         // workspace management
         "M-Tab" => run_internal!(toggle_workspace);
+        "M-space" => run_internal!(toggle_workspace);
+        "M-y" => run_internal!(cycle_screen, Forward);
+        "M-c" => run_internal!(cycle_screen, Backward);
 
         // Layout management
-        "M-space" => run_internal!(cycle_layout, Forward);
         "M-f" => run_internal!(cycle_layout, Forward);
-        "M-S-space" => run_internal!(cycle_layout, Backward);
         "M-Up" => run_internal!(update_max_main, More);
         "M-Down" => run_internal!(update_max_main, Less);
         "M-Right" => run_internal!(update_main_ratio, More);
