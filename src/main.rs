@@ -126,10 +126,10 @@ fn main() -> Result<()> {
         };
     };
 
-    let float_scales: HashMap<String, f64> =
-        [("fsearch".to_string(), 0.4),
-         ("arcologout.py".to_string(), 0.7)]
-        .iter().cloned().collect();
+    let float_scales: HashMap<String, f64> = [
+        ("fsearch".to_string(), 0.4),
+        ("arcologout.py".to_string(), 0.7),
+    ].iter().cloned().collect();
 
     let center_ignores: Vec<String> = vec!["polybar".to_string(),
                                            "tray".to_string(),

@@ -9,6 +9,8 @@ use penrose::{
 
 use std::collections::HashMap;
 
+
+
 pub struct StartupScript {
     path: String,
 }
@@ -24,6 +26,8 @@ impl<X: XConn> Hook<X> for StartupScript {
         spawn!(&self.path)
     }
 }
+
+
 
 pub struct CenterFloats {
     default_scale: f64,
