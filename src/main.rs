@@ -17,8 +17,9 @@ use penrose::{
 };
 
 use penrose_ajrae::{
+    actions::inc_redshift,
     hooks::{StartupScript, CenterFloats},
-    TERMINAL, LAUNCHER, BROWSER, EDITOR, START_SCRIPT, FOLLOW_FOCUS_CONF
+    TERMINAL, BROWSER, EDITOR, LAUNCHER, START_SCRIPT, FOLLOW_FOCUS_CONF
 };
 
 use simplelog::{LevelFilter, SimpleLogger};
@@ -54,6 +55,7 @@ fn main() -> Result<()> {
         .build()
         .unwrap();
 
+
     let key_bindings = gen_keybindings! {
         // Main programs
         "M-r" => run_external!(LAUNCHER);
@@ -84,6 +86,9 @@ fn main() -> Result<()> {
         "XF86AudioNext" => run_external!("playerctl next");
         "XF86AudioPrev" => run_external!("playerctl previous");
         "XF86AudioStop" => run_external!("playerctl stop");
+
+        "M-XF86MonBrightnessUp" => inc_redshift(250);
+        "M-XF86MonBrightnessDown" => inc_redshift(-250);
 
         // Screenshots
         "Print" => run_external!("flameshot gui");
@@ -128,6 +133,7 @@ fn main() -> Result<()> {
 
     let float_scales: HashMap<String, f64> = [
         ("fsearch".to_string(), 0.4),
+        ("arandr".to_string(), 0.6),
         ("arcologout.py".to_string(), 0.7),
     ].iter().cloned().collect();
 

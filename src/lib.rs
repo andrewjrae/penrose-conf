@@ -1,9 +1,13 @@
 #[macro_use]
 extern crate penrose;
 
-use penrose::core::layout::LayoutConf;
+use penrose::{core::layout::LayoutConf, xcb::XcbConnection, WindowManager};
 
 pub mod hooks;
+pub mod actions;
+
+pub type Conn = XcbConnection;
+pub type Wm = WindowManager<Conn>;
 
 #[macro_export]
 macro_rules! layout {
@@ -41,6 +45,7 @@ pub const FOLLOW_FOCUS_CONF: LayoutConf = LayoutConf {
 
 pub const RATIO: f32 = 0.5;
 pub const N_MAIN: u32 = 1;
+pub const INITIAL_SCREEN_TEMP: i32 = 6500;
 pub const FLOAT_CLASS: &str = "floating";
 
 pub const TERMINAL: &str = TERMINAL_MACRO!();
