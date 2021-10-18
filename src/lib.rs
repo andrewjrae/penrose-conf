@@ -5,6 +5,7 @@ use penrose::{core::layout::LayoutConf, xcb::XcbConnection, WindowManager};
 
 pub mod hooks;
 pub mod actions;
+pub mod redshifter;
 
 pub type Conn = XcbConnection;
 pub type Wm = WindowManager<Conn>;

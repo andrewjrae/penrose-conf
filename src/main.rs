@@ -17,7 +17,7 @@ use penrose::{
 };
 
 use penrose_ajrae::{
-    actions::inc_redshift,
+    actions::{inc_redshift, soft_restart},
     hooks::{StartupScript, CenterFloats},
     TERMINAL, BROWSER, EDITOR, LAUNCHER, START_SCRIPT, FOLLOW_FOCUS_CONF
 };
@@ -97,7 +97,7 @@ fn main() -> Result<()> {
 
         // Exit Penrose (important to remember this one!)
         "M-A-C-Escape" => run_internal!(exit);
-        "M-A-C-r" => run_external!(START_SCRIPT);
+        "M-A-C-r" => soft_restart();
 
         // client management
         "M-j" => run_internal!(cycle_client, Forward);
