@@ -22,16 +22,12 @@ use penrose_ajrae::{
     TERMINAL, BROWSER, EDITOR, LAUNCHER, START_SCRIPT, FOLLOW_FOCUS_CONF
 };
 
-use simplelog::{LevelFilter, SimpleLogger};
-
 use std::collections::HashMap;
 
 // Start hook to run all the important stuff like picom etc
 fn main() -> Result<()> {
-    // Initialise the logger (use LevelFilter::Debug to enable debug logging)
-    if let Err(e) = SimpleLogger::init(LevelFilter::Info, simplelog::Config::default()) {
-        panic!("unable to set log level: {}", e);
-    };
+
+    log4rs::init_file("/home/ajrae/penrose-conf/logger.yml", Default::default()).unwrap();
 
     let floating_classes = vec![
         // "rofi",

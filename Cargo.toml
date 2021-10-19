@@ -13,4 +13,5 @@ path = "src/main.rs"
 penrose = { path = "/home/ajrae/penrose" }
 # penrose = { git = "https://github.com/sminez/penrose.git", rev = "023dc55b61282d8f92e31d97317ba8d562833d5a" }
 # penrose = "0.2"
-simplelog = "0.8"
+# log = "0.4"
+log4rs = "1"
