@@ -67,7 +67,7 @@ fn main() -> Result<()> {
         "M-u" => run_external!("arcolinux-logout");
 
         // Terminal utils
-        "M-h" => run_in_terminal!("htop");
+        "M-h" => run_in_terminal!("btop");
         "M-q" => run_in_terminal!("qalc");
 
         "M-C-w" => run_external!("networkmanager_dmenu");
